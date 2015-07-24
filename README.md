@@ -39,3 +39,7 @@ oauth.getSignedHeader(uri+"/v1/echo", method="POST", params=Map("c"->"3", "d"->"
   ```
   libraryDependencies += "io.dronekit" %% "oauth-headers" % "0.1"
   ```
+
+##Testing
+
+`sbt test`
