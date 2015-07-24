@@ -121,7 +121,6 @@ class Oauth(secret: String, key: String, callback: String="oob") {
     )
 
     val fullParams = baseParams ++ Oauth.encodeParams(params)
-    println(s"fullParams $fullParams")
     val signature = getSignature(method, url, fullParams, secret, _tokenSecret)
     baseParams += (("oauth_signature", URLEncoder.encode(signature)))
     baseParams += (("oauth_consumer_key", URLEncoder.encode(key)))
@@ -133,7 +132,6 @@ class Oauth(secret: String, key: String, callback: String="oob") {
   def getHash(value: String, key: String, token: String=""): String = {
     // creates signature hash from token & key
     val keyString = URLEncoder.encode(key) + "&" + token
-    println(s"keyString  $keyString")
     val keyBytes = keyString.getBytes();
   	val signingKey = new SecretKeySpec(keyBytes, "HmacSHA1")
   	val mac = Mac.getInstance("HmacSHA1");
@@ -149,7 +147,6 @@ class Oauth(secret: String, key: String, callback: String="oob") {
     val sigString = method.toUpperCase() + "&" + URLEncoder.encode(url) + "&" +
 			URLEncoder.encode(sorted.map(p => p._1 + "=" + p._2).reduceLeft{(joined,p) => joined + "&" + p})
 
-    println(s"sigString $sigString")
     getHash(sigString, key, token)
   }
 
