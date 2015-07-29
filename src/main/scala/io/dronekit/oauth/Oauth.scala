@@ -1,12 +1,12 @@
 package io.dronekit.oauth
 
-import scala.util.Random
-import org.apache.commons.codec.binary.Base64.encodeBase64
-import java.nio.charset.StandardCharsets
-import javax.crypto.spec.SecretKeySpec
 import javax.crypto.Mac
+import javax.crypto.spec.SecretKeySpec
+
+import org.apache.commons.codec.binary.Base64.encodeBase64
+
 import scala.collection.immutable.SortedMap
-import io.dronekit.oauth._
+import scala.util.Random
 
 object AuthProgress extends Enumeration {
   val NotAuthed, HasRequestTokens, HasAccessTokens = Value
@@ -42,9 +42,7 @@ class Oauth(secret: String, key: String, callback: String="oob") {
   private var _tokenVerifier = ""
   var authProgress = AuthProgress.NotAuthed
 
-  def hasKeys(): Boolean = {
-    (!secret.isEmpty && !key.isEmpty)
-  }
+  def hasKeys: Boolean = !secret.isEmpty && !key.isEmpty
 
   def setRequestTokens(token: String, secret: String, verifier: String=""){
     // sets the request tokens. changes state to access tokens.
@@ -61,8 +59,8 @@ class Oauth(secret: String, key: String, callback: String="oob") {
     authProgress = AuthProgress.HasAccessTokens
   }
 
-  def canSignRequests(): Boolean = {
-    (authProgress == AuthProgress.HasAccessTokens)
+  def canSignRequests: Boolean = {
+    authProgress == AuthProgress.HasAccessTokens
   }
 
   def getRequestTokenHeader(url: String, method: String="POST", nonce: String="", epoch: String=""): String = {
@@ -82,7 +80,7 @@ class Oauth(secret: String, key: String, callback: String="oob") {
     params += (("realm", url))
     params += (("oauth_signature", URLEncoder.encode(signature)))
     // returns the auth header
-    "OAuth "+(params.map{ x => x._1 + "=\""+ x._2+"\""}).mkString(",")
+    "OAuth " + params.map { x => x._1 + "=\"" + x._2 + "\"" }.mkString(",")
   }
 
   def getAccessTokenHeader(url: String, method: String="POST", nonce: String="", epoch: String=""): String = {
