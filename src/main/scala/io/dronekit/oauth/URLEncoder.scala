@@ -25,7 +25,7 @@ object URLEncoder {
     if (ch > 128 || ch < 0) {
       return true;
     }
-    return " %$&+,/:;=?@<>#%".indexOf(ch) >= 0;
+    return " %$&+,/:;=?@<>#%[]".indexOf(ch) >= 0;
   }
 
 }

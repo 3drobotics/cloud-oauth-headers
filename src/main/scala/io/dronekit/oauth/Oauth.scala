@@ -19,7 +19,7 @@ object Oauth {
   }
 
   def encodeParams(params: Map[String, String]): Map[String, String] = {
-    params.foldLeft(Map[String, String]()) {(encoded, item) => encoded + (item._1 -> URLEncoder.encode(item._2))}
+    params.foldLeft(Map[String, String]()) {(encoded, item) => encoded + (URLEncoder.encode(item._1) -> URLEncoder.encode(item._2))}
   }
 
   // def getBaseParams(key: String, token: String, epoch: String="", nonce: String=""): Map[String, String] = {
@@ -69,13 +69,17 @@ class Oauth(secret: String, key: String, callback: String="oob") {
     val _nonce = if (!nonce.isEmpty) nonce else Oauth.getNonce()
     val _epoch = if (!epoch.isEmpty) epoch else (System.currentTimeMillis()/1000).toString
 
-    var params = Map("oauth_callback"->callback,
+    var params = Map(
       "oauth_consumer_key"->key,
       "oauth_signature_method"->Oauth.signatureMethod,
       "oauth_timestamp"->_epoch,
       "oauth_nonce"->_nonce,
       "oauth_version"->"1.0"
     )
+
+    if (!callback.isEmpty) {
+      params += (("oauth_callback", callback))
+    }
 
     val signature = getSignature(method, url, params, secret)
 
@@ -89,19 +93,19 @@ class Oauth(secret: String, key: String, callback: String="oob") {
     val _nonce = if (!nonce.isEmpty) nonce else Oauth.getNonce()
     val _epoch = if (!epoch.isEmpty) epoch else (System.currentTimeMillis()/1000).toString
 
-    var params = Map("oauth_consumer_key"->key,
+    var params = Map("oauth_consumer_key"->URLEncoder.encode(key),
       "oauth_signature_method"->Oauth.signatureMethod,
       "oauth_timestamp"->_epoch,
       "oauth_nonce"->_nonce,
       "oauth_version"->"1.0",
-      "oauth_token"->_token,
-      "oauth_verifier"->_tokenVerifier
+      "oauth_token"->URLEncoder.encode(_token)
     )
 
+    if (!_tokenVerifier.isEmpty) {
+      params += (("oauth_verifier", URLEncoder.encode(_tokenVerifier)))
+    }
+
     val signature = getSignature(method, url, params, secret, _tokenSecret)
-    params += (("oauth_consumer_key", URLEncoder.encode(key)))
-    params += (("oauth_token", URLEncoder.encode(_token)))
-    params += (("oauth_verifier", URLEncoder.encode(_tokenVerifier)))
     params += (("realm", url))
     params += (("oauth_signature", URLEncoder.encode(signature)))
 
@@ -112,31 +116,31 @@ class Oauth(secret: String, key: String, callback: String="oob") {
     val _nonce = if (!nonce.isEmpty) nonce else Oauth.getNonce()
     val _epoch = if (!epoch.isEmpty) epoch else (System.currentTimeMillis()/1000).toString
 
-    var baseParams = Map("oauth_consumer_key"->key,
+    var baseParams = Map("oauth_consumer_key"->URLEncoder.encode(key),
       "oauth_signature_method"->Oauth.signatureMethod,
       "oauth_timestamp"->_epoch,
       "oauth_nonce"->_nonce,
       "oauth_version"->"1.0",
-      "oauth_token"->_token
+      "oauth_token"->URLEncoder.encode(_token)
     )
 
     val fullParams = baseParams ++ Oauth.encodeParams(params)
     val signature = getSignature(method, url, fullParams, secret, _tokenSecret)
     baseParams += (("oauth_signature", URLEncoder.encode(signature)))
-    baseParams += (("oauth_consumer_key", URLEncoder.encode(key)))
-    baseParams += (("oauth_token", URLEncoder.encode(_token)))
+    // baseParams += (("oauth_consumer_key", URLEncoder.encode(key)))
+    // baseParams += (("oauth_token", URLEncoder.encode(_token)))
 
     "OAuth "+(baseParams.map{ x => x._1 + "=\""+ x._2+"\""}).mkString(",")
   }
 
   def getHash(value: String, key: String, token: String=""): String = {
     // creates signature hash from token & key
-    val keyString = URLEncoder.encode(key) + "&" + token
-    val keyBytes = keyString.getBytes();
+    val keyString = URLEncoder.encode(key) + "&" + URLEncoder.encode(token)
+    val keyBytes = keyString.getBytes()
   	val signingKey = new SecretKeySpec(keyBytes, "HmacSHA1")
-  	val mac = Mac.getInstance("HmacSHA1");
-  	mac.init(signingKey);
-  	val rawHmac = mac.doFinal(value.getBytes());
+  	val mac = Mac.getInstance("HmacSHA1")
+  	mac.init(signingKey)
+  	val rawHmac = mac.doFinal(value.getBytes())
   	return new String(encodeBase64(rawHmac))
   }
 
@@ -146,8 +150,8 @@ class Oauth(secret: String, key: String, callback: String="oob") {
 
     val sigString = method.toUpperCase() + "&" + URLEncoder.encode(url) + "&" +
 			URLEncoder.encode(sorted.map(p => p._1 + "=" + p._2).reduceLeft{(joined,p) => joined + "&" + p})
-
     getHash(sigString, key, token)
+
   }
 
 }

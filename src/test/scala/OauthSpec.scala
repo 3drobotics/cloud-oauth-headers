@@ -20,7 +20,7 @@ class OauthSpec extends FunSpec with Matchers {
     it("can generate an auth token header") {
       val oauth = new Oauth(key="key", secret="secret")
       oauth.setRequestTokens("requestkey", "requestsecret")
-      assert("""OAuth oauth_signature_method="HMAC-SHA1",oauth_verifier="",oauth_signature="P0DVFf8rdrb1a4GCTbeAaKMGrio%3D",oauth_consumer_key="key",oauth_version="1.0",oauth_token="requestkey",oauth_timestamp="1437716636",realm="http://oauthbin.com/v1/access-token",oauth_nonce="2Xm0M1N8XT1437716636""""
+      assert("""OAuth oauth_signature_method="HMAC-SHA1",oauth_signature="izrd8vZ2aA67smgS2ioq4MhOHG8%3D",oauth_consumer_key="key",oauth_version="1.0",oauth_token="requestkey",oauth_timestamp="1437716636",realm="http://oauthbin.com/v1/access-token",oauth_nonce="2Xm0M1N8XT1437716636""""
         == oauth.getAccessTokenHeader(uri+"/v1/access-token", nonce="2Xm0M1N8XT1437716636", epoch="1437716636"))
     }
 
@@ -31,5 +31,12 @@ class OauthSpec extends FunSpec with Matchers {
         == oauth.getSignedHeader(uri+"/v1/echo", method="GET", params=Map("a"->"1", "b"->"2"), nonce="60RgxveTVS1437716637", epoch="1437716637"))
     }
 
+
+    it("can generate a hash with keys that need to be escaped") {
+      val oauth = new Oauth(key="207e4f25-31d0-4032-8312-ce3b4e738b48", secret="956f6ff3-f2da-4016-9ba7-e446e640cf4b")
+      val testStr =  "POST&http%3A%2F%2Foauthbin.com%2Fv1%2Fecho&clientID%3DHauIUgRcEFaiknNVOf6bsXYxs6M%26file%255B0%255D%3Dhttp%253A%252F%252Finspector-gadget.s3.amazonaws.com%252FFortMason%252FImages%252FG0040389.JPG%26file%255B1%255D%3Dhttp%253A%252F%252Finspector-gadget.s3.amazonaws.com%252FFortMason%252FImages%252FG0040390.JPG%26oauth_consumer_key%3Dkey%26oauth_nonce%3Dec51043fc194a44b87e782cc73537a7353b7e361%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1438198255%26oauth_token%3Daccesskey%26oauth_version%3D1.0%26photosceneid%3DHQuTpwTYHZKbnnjDDQolRmhzVBE%26type%3Dimage"
+      val hash = oauth.getHash(testStr, "secret", "asdf")
+      assert(hash === "vhm4LWRV2D9q19PrAU2AiNQhQ8w=")
+    }
   }
 }
