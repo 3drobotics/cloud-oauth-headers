@@ -72,5 +72,13 @@ class OauthSpec extends FunSpec with Matchers {
       val hash = oauth.getHash(testStr, "secret", "asdf")
       assert(hash === "vhm4LWRV2D9q19PrAU2AiNQhQ8w=")
     }
+
+    it("can return a token entity") {
+      val oauth = new Oauth(key="key", secret="secret")
+      oauth.setAccessTokens("accessKey", "accessSecret")
+      val tokenEntity = oauth.getTokens()
+      assert(tokenEntity.key === "accessKey")
+      assert(tokenEntity.secret === "accessSecret")
+    }
   }
 }

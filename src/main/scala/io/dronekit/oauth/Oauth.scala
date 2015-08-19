@@ -36,6 +36,8 @@ object Oauth {
   // }
 }
 
+case class TokenEntity(key: String, secret: String)
+
 class Oauth(secret: String, key: String, callback: String="oob") {
   private var _token = ""
   private var _tokenSecret = ""
@@ -61,6 +63,10 @@ class Oauth(secret: String, key: String, callback: String="oob") {
 
   def canSignRequests: Boolean = {
     authProgress == AuthProgress.HasAccessTokens
+  }
+
+  def getTokens(): TokenEntity = {
+    TokenEntity(_token, _tokenSecret)
   }
 
   def getRequestTokenHeader(url: String, method: String="POST", nonce: String="", epoch: String=""): String = {
