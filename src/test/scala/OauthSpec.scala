@@ -80,5 +80,12 @@ class OauthSpec extends FunSpec with Matchers {
       assert(tokenEntity.key === "accessKey")
       assert(tokenEntity.secret === "accessSecret")
     }
+
+    it("can generate a hash with a callback url") {
+      val oauth = new Oauth(key="MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98", secret="MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98")
+      val testStr = "POST&https%3A%2F%2Faccounts.autodesk.com%2FOAuth%2FRequestToken&oauth_callback%3Dhttp%253A%252F%252F6c9df4ff.ngrok.io%26oauth_consumer_key%3D207e4f25-31d0-4032-8312-ce3b4e738b48%26oauth_nonce%3D4HQuCpmhvF1440099378%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1440099378%26oauth_version%3D1.0"
+      val hash = oauth.getHash(testStr, "MCD8BKwGdgPHvAuvgvz4EQpqDAtx89grbuNMRd7Eh98", "")
+      assert(hash === "JnxxIGGO3R2wXLLi9ut9uK/fAr0=")
+    }
   }
 }

@@ -36,7 +36,7 @@ object Oauth {
   // }
 }
 
-case class TokenEntity(key: String, secret: String)
+case class TokenEntity(key: String, secret: String, verifier: String)
 
 class Oauth(secret: String, key: String, callback: String="oob") {
   private var _token = ""
@@ -46,12 +46,15 @@ class Oauth(secret: String, key: String, callback: String="oob") {
 
   def hasKeys: Boolean = !secret.isEmpty && !key.isEmpty
 
-  def setRequestTokens(token: String, secret: String, verifier: String=""){
+  def setRequestTokens(token: String, secret: String){
     // sets the request tokens. changes state to access tokens.
     _token = token
     _tokenSecret = secret
-    _tokenVerifier = verifier
     authProgress = AuthProgress.HasRequestTokens
+  }
+
+  def setVerifier(verifier: String) {
+    _tokenVerifier = verifier
   }
 
   def setAccessTokens(token: String, secret: String) {
@@ -66,7 +69,7 @@ class Oauth(secret: String, key: String, callback: String="oob") {
   }
 
   def getTokens(): TokenEntity = {
-    TokenEntity(_token, _tokenSecret)
+    TokenEntity(_token, _tokenSecret, _tokenVerifier)
   }
 
   def getRequestTokenHeader(url: String, method: String="POST", nonce: String="", epoch: String=""): String = {
@@ -74,7 +77,7 @@ class Oauth(secret: String, key: String, callback: String="oob") {
     val _epoch = if (!epoch.isEmpty) epoch else (System.currentTimeMillis()/1000).toString
 
     var params = Map(
-      "oauth_consumer_key"->key,
+      "oauth_consumer_key"->URLEncoder.encode(key),
       "oauth_signature_method"->Oauth.signatureMethod,
       "oauth_timestamp"->_epoch,
       "oauth_nonce"->_nonce,
@@ -82,7 +85,7 @@ class Oauth(secret: String, key: String, callback: String="oob") {
     )
 
     if (!callback.isEmpty) {
-      params += (("oauth_callback", callback))
+      params += (("oauth_callback", URLEncoder.encode(callback)))
     }
 
     val signature = getSignature(method, url, params, secret)
@@ -154,8 +157,8 @@ class Oauth(secret: String, key: String, callback: String="oob") {
 
     val sigString = method.toUpperCase() + "&" + URLEncoder.encode(url) + "&" +
 			URLEncoder.encode(sorted.map(p => p._1 + "=" + p._2).reduceLeft{(joined,p) => joined + "&" + p})
-    getHash(sigString, key, token)
 
+    getHash(sigString, key, token)
   }
 
 }
