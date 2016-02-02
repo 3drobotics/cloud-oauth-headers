@@ -1,11 +1,6 @@
-package io.dronekit.oauth
 
-import collection.mutable.Stack
+import io.dronekit.oauth.Oauth
 import org.scalatest._
-import org.scalatest.concurrent._
-import scala.concurrent.duration._
-import scala.concurrent.Future
-import io.dronekit.oauth
 
 class OauthSpec extends FunSpec with Matchers {
   describe("Oauth") {
@@ -76,7 +71,7 @@ class OauthSpec extends FunSpec with Matchers {
     it("can return a token entity") {
       val oauth = new Oauth(key="key", secret="secret")
       oauth.setAccessTokens("accessKey", "accessSecret")
-      val tokenEntity = oauth.getTokens()
+      val tokenEntity = oauth.getTokens
       assert(tokenEntity.key === "accessKey")
       assert(tokenEntity.secret === "accessSecret")
     }

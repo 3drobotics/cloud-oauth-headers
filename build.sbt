@@ -2,13 +2,15 @@ enablePlugins(JavaAppPackaging)
 
 name := "oauth-headers"
 organization := "io.dronekit"
-version := "0.1"
+version := "0.3"
 scalaVersion := "2.11.7"
 
-resolvers += "Artifactory" at "https://dronekit.artifactoryonline.com/dronekit/libs-snapshot-local/"
+resolvers += "Artifactory Realm" at "https://dronekit.artifactoryonline.com/dronekit/libs-snapshot-local/"
 
-credentials += Credentials("Artifactory Realm", "dronekit.artifactoryonline.com", "publish", "Km4-PSH-aEM-6Fm")
+credentials += Credentials(Path.userHome / ".sbt" / ".credentials")
+
 isSnapshot := true
+
 publishTo := {
   val artifactory = "https://dronekit.artifactoryonline.com/"
   if (isSnapshot.value)
