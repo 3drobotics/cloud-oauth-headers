@@ -42,6 +42,8 @@ class Oauth(secret: String, key: String, callback: String="oob") {
   private var _token = ""
   private var _tokenSecret = ""
   private var _tokenVerifier = ""
+  private var _sessionHandle = ""
+
   var authProgress = AuthProgress.NotAuthed
 
   def hasKeys: Boolean = !secret.isEmpty && !key.isEmpty
@@ -57,10 +59,11 @@ class Oauth(secret: String, key: String, callback: String="oob") {
     _tokenVerifier = verifier
   }
 
-  def setAccessTokens(token: String, secret: String) {
+  def setAccessTokens(token: String, secret: String, sessionHandle: String = "") {
     // after this is set, oauth can start making authenticated calls
     _token = token
     _tokenSecret = secret
+    _sessionHandle = sessionHandle
     authProgress = AuthProgress.HasAccessTokens
   }
 
@@ -107,6 +110,10 @@ class Oauth(secret: String, key: String, callback: String="oob") {
       "oauth_version"->"1.0",
       "oauth_token"->URLEncoder.encode(_token)
     )
+
+    if (!_sessionHandle.isEmpty) {
+      params += (("oauth_session_handle", URLEncoder.encode(_sessionHandle)))
+    }
 
     if (!_tokenVerifier.isEmpty) {
       params += (("oauth_verifier", URLEncoder.encode(_tokenVerifier)))
