@@ -2,7 +2,7 @@ enablePlugins(JavaAppPackaging)
 
 name := "oauth-headers"
 organization := "io.dronekit"
-version := "0.2"
+version := "0.3"
 scalaVersion := "2.11.7"
 
 resolvers += "Artifactory Realm" at "https://dronekit.artifactoryonline.com/dronekit/libs-snapshot-local/"
