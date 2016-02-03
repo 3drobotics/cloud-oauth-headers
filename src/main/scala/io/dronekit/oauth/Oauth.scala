@@ -10,7 +10,7 @@ import scala.collection.immutable.SortedMap
 import scala.util.Random
 
 object AuthProgress extends Enumeration {
-  val Unauthenticated, HasRequestTokens, HasAccessTokens = Value
+  val Unauthenticated, HasRequestTokens, HasAccessTokens, RequestRefreshTokens = Value
 }
 
 object Oauth {
@@ -65,7 +65,12 @@ class Oauth(secret: String, key: String, callback: String="oob") {
     _token = token
     _tokenSecret = secret
     _sessionHandle = sessionHandle
-    authProgress = AuthProgress.HasAccessTokens
+
+    authProgress = if (sessionHandle.nonEmpty) {
+      AuthProgress.RequestRefreshTokens
+    } else {
+      AuthProgress.HasAccessTokens
+    }
   }
 
   def canSignRequests: Boolean = {
