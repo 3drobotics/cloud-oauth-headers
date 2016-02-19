@@ -1,7 +1,7 @@
 enablePlugins(JavaAppPackaging)
 
 name := "oauth-headers"
-organization := "io.dronekit"
+organization := "cloud.drdrdr"
 version := "0.3"
 scalaVersion := "2.11.7"
 

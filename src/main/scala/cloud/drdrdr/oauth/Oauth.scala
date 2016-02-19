@@ -1,4 +1,4 @@
-package io.dronekit.oauth
+package cloud.drdrdr.oauth
 
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
@@ -22,19 +22,6 @@ object Oauth {
       (encoded, item) => encoded + (URLEncoder.encode(item._1, "UTF-8") -> URLEncoder.encode(item._2, "UTF-8"))
     }
   }
-
-  // def getBaseParams(key: String, token: String, epoch: String="", nonce: String=""): Map[String, String] = {
-  //   val nonce = if (!nonce.isEmpty) nonce else getNonce()
-  //   val epoch = if (!epoch.isEmpty) epoch else (System.currentTimeMillis()/1000).toString
-  //
-  //   Map("oauth_consumer_key"->key,
-  //    "oauth_signature_method"->signatureMethod,
-  //    "oauth_timestamp"->epoch,
-  //    "oauth_nonce"->nonce,
-  //    "oauth_version"->"1.0",
-  //    "oauth_token"->token
-  //  )
-  // }
 }
 
 case class TokenEntity(key: String, secret: String, verifier: String)
@@ -147,8 +134,6 @@ class Oauth(secret: String, key: String, callback: String="oob") {
     val fullParams = baseParams ++ Oauth.encodeParams(params)
     val signature = getSignature(method, url, fullParams, secret, _tokenSecret)
     baseParams += (("oauth_signature", URLEncoder.encode(signature, "UTF-8")))
-    // baseParams += (("oauth_consumer_key", URLEncoder.encode(key)))
-    // baseParams += (("oauth_token", URLEncoder.encode(_token)))
 
     "OAuth "+ baseParams.map { x => x._1 + "=\"" + x._2 + "\"" }.mkString(",")
   }

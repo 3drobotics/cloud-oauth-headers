@@ -37,7 +37,7 @@ oauth.getSignedHeader(uri+"/v1/echo", method="POST", params=Map("c"->"3", "d"->"
 2. `sbt publish-local`
 3. add the following to `build.sbt`
   ```
-  libraryDependencies += "io.dronekit" %% "oauth-headers" % "0.1"
+  libraryDependencies += "cloud.drdrdr" %% "oauth-headers" % "0.3"
   ```
 
 ##Testing

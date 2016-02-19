@@ -1,5 +1,5 @@
 
-import io.dronekit.oauth.Oauth
+import cloud.drdrdr.oauth._
 import org.scalatest._
 
 class OauthSpec extends FunSpec with Matchers {
