@@ -3,7 +3,8 @@ enablePlugins(JavaAppPackaging)
 name := "oauth-headers"
 organization := "cloud.drdrdr"
 version := "0.3"
-scalaVersion := "2.11.7"
+scalaVersion := "2.12.1"
+crossScalaVersions := Seq("2.11.8", "2.12.1")
 
 resolvers += "Artifactory Realm" at "https://dronekit.artifactoryonline.com/dronekit/libs-snapshot-local/"
 
@@ -23,5 +24,6 @@ publishTo := {
 libraryDependencies ++= {
   Seq(
     "commons-codec" % "commons-codec" % "1.6",
-    "org.scalatest" %% "scalatest" % "2.2.4" % "test")
+    "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+  )
 }
